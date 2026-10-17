@@ -29,8 +29,8 @@ fi
 
 cd "${APP_DIR}"
 
-# 2. Put AT Loops into Maintenance Mode (Bypasses active connections on other sites)
-if [ -f "${APP_DIR}/backend/artisan" ]; then
+# 2. Put AT Loops into Maintenance Mode (if already installed)
+if [ -f "${APP_DIR}/backend/vendor/autoload.php" ]; then
     echo "⏸️  Enabling maintenance mode for AT Loops..."
     ${PHP_BIN} "${APP_DIR}/backend/artisan" down --retry=60 --secret="atloops-deploy-bypass" || true
 fi
