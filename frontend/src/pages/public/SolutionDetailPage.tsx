@@ -3,9 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import { api } from '../../services/api';
 import { Product } from '../../types';
+import { PayPalCheckoutModal } from '../../components/checkout/PayPalCheckoutModal';
 import { 
   ChevronRight, ArrowRight, Check, ShieldCheck, 
-  ExternalLink, Layers, CheckCircle2, MessageSquare, Phone 
+  ExternalLink, Layers, CheckCircle2, MessageSquare, Phone,
+  CreditCard, Lock, Sparkles
 } from 'lucide-react';
 
 export const SolutionDetailPage: React.FC = () => {
@@ -22,6 +24,7 @@ export const SolutionDetailPage: React.FC = () => {
   const [inquiryMessage, setInquiryMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -126,6 +129,17 @@ export const SolutionDetailPage: React.FC = () => {
                   </span>
                 )}
               </div>
+
+              {product.price && (
+                <button
+                  type="button"
+                  onClick={() => setIsCheckoutOpen(true)}
+                  className="mt-4 w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-xs py-3 px-5 rounded-2xl shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5"
+                >
+                  <CreditCard className="w-4 h-4" />
+                  <span>{locale === 'ar' ? 'شراء فوري بالفيزا / باي بال' : 'Buy Now with Visa / PayPal'}</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -181,10 +195,60 @@ export const SolutionDetailPage: React.FC = () => {
 
           {/* Quick Inquiry Form */}
           <div className="space-y-6">
+
+            {/* Instant Online Purchase Card */}
+            {product.price && (
+              <div className="bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 text-white rounded-3xl p-7 border border-blue-900/60 shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
+                
+                <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 mb-2">
+                  <Sparkles className="w-4 h-4" />
+                  <span>{locale === 'ar' ? 'شراء مباشر وترخيص فوري' : 'Instant Verified License'}</span>
+                </div>
+
+                <h3 className="text-lg font-bold text-white mb-1">
+                  {locale === 'ar' ? 'طلب ودفع أونلاين بالفيزا / باي بال' : 'Instant Online Checkout'}
+                </h3>
+                
+                <p className="text-xs text-slate-300 mb-4 leading-relaxed">
+                  {locale === 'ar'
+                    ? 'ادفع بأمان عبر بطاقة فيزا أو ماستركارد أو حساب باي بال، واستلم رخصة النظام فوراً.'
+                    : 'Pay securely using Visa, Mastercard, or PayPal to receive your software license immediately.'}
+                </p>
+
+                <div className="p-3.5 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-between mb-4">
+                  <span className="text-xs text-slate-300">{locale === 'ar' ? 'سعر النظام:' : 'System Price:'}</span>
+                  <span className="text-2xl font-black text-emerald-400">${product.price} <span className="text-xs font-normal text-slate-300">USD</span></span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsCheckoutOpen(true)}
+                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/20 transform hover:-translate-y-0.5"
+                >
+                  <CreditCard className="w-4 h-4" />
+                  <span>{locale === 'ar' ? 'شراء ودفع أونلاين الآن' : 'Pay Online with Visa / PayPal'}</span>
+                </button>
+
+                <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
+                  <span className="flex items-center gap-1">
+                    <Lock className="w-3 h-3 text-emerald-400" />
+                    {locale === 'ar' ? 'حماية 256-Bit SSL' : '256-Bit SSL Protected'}
+                  </span>
+                  <div className="flex items-center gap-1.5 font-bold text-[10px] text-slate-300">
+                    <span>VISA</span>
+                    <span>•</span>
+                    <span>MC</span>
+                    <span>•</span>
+                    <span>PAYPAL</span>
+                  </div>
+                </div>
+              </div>
+            )}
             
             <div className="bg-white rounded-3xl p-7 border border-slate-200 shadow-xl">
               <h3 className="text-base font-bold text-slate-900 mb-2">
-                {locale === 'ar' ? 'طلب عرض أسعار أو استشارة تجريبية' : 'Request Pricing or System Demo'}
+                {locale === 'ar' ? 'طلب استشارة مخصصة أو ديمو' : 'Request Pricing or System Demo'}
               </h3>
               <p className="text-xs text-slate-500 mb-5 leading-relaxed">
                 {locale === 'ar'
@@ -292,6 +356,15 @@ export const SolutionDetailPage: React.FC = () => {
 
         </div>
       </div>
+
+      {/* PayPal & Credit Card Checkout Modal */}
+      {product && (
+        <PayPalCheckoutModal
+          product={product}
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+        />
+      )}
 
     </div>
   );

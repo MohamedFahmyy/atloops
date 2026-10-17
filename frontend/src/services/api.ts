@@ -369,5 +369,61 @@ export const api = {
     });
     return handleResponse(res);
   },
+
+  // --- Payment & Checkout (PayPal / Visa) ---
+  getPayPalConfig: async (): Promise<{ client_id: string; currency: string; is_configured: boolean }> => {
+    const res = await fetch(`${API_BASE}/payments/paypal/config`);
+    const json = await handleResponse(res);
+    return json.data;
+  },
+
+  createPayPalOrder: async (data: {
+    product_id?: number;
+    customer_name: string;
+    customer_email: string;
+    customer_phone?: string;
+    amount?: number;
+    notes?: string;
+  }): Promise<{
+    order_id: number;
+    order_number: string;
+    paypal_order_id: string;
+    amount: number;
+    currency: string;
+  }> => {
+    const res = await fetch(`${API_BASE}/payments/paypal/create-order`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    const json = await handleResponse(res);
+    return json.data;
+  },
+
+  capturePayPalOrder: async (data: {
+    order_id: number;
+    paypal_order_id: string;
+  }): Promise<{
+    order_number: string;
+    customer_name: string;
+    amount: number;
+    currency: string;
+    status: string;
+    capture_id?: string;
+  }> => {
+    const res = await fetch(`${API_BASE}/payments/paypal/capture-order`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    const json = await handleResponse(res);
+    return json.data;
+  },
 };
 

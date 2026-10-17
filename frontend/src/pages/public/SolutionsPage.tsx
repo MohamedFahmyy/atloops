@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import { api } from '../../services/api';
 import { Product, ProductCategory } from '../../types';
+import { PayPalCheckoutModal } from '../../components/checkout/PayPalCheckoutModal';
 import { 
   Search, ArrowRight, Check, Sparkles, Filter, 
-  ExternalLink, Layers, Laptop, Smartphone, Monitor 
+  ExternalLink, Layers, Laptop, Smartphone, Monitor, CreditCard 
 } from 'lucide-react';
 
 export const SolutionsPage: React.FC = () => {
@@ -15,6 +16,7 @@ export const SolutionsPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [checkoutProduct, setCheckoutProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -166,7 +168,7 @@ export const SolutionsPage: React.FC = () => {
 
               </div>
 
-              <div className="p-6 bg-slate-50/70 border-t border-slate-100 flex items-center justify-between gap-3">
+              <div className="p-6 bg-slate-50/70 border-t border-slate-100 flex items-center justify-between gap-2">
                 <Link
                   to={`/products/${p.slug}`}
                   className="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-2.5 rounded-xl transition-colors shadow-sm"
@@ -174,12 +176,23 @@ export const SolutionsPage: React.FC = () => {
                   {t('cta.learn_more')}
                 </Link>
 
-                <Link
-                  to="/request-quote"
-                  className="flex-1 text-center bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs py-2.5 rounded-xl border border-slate-200 transition-colors"
-                >
-                  {t('cta.quote')}
-                </Link>
+                {p.price ? (
+                  <button
+                    type="button"
+                    onClick={() => setCheckoutProduct(p)}
+                    className="flex-1 text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded-xl transition-colors shadow-sm flex items-center justify-center gap-1.5"
+                  >
+                    <CreditCard className="w-3.5 h-3.5" />
+                    <span>{locale === 'ar' ? 'شراء أونلاين' : 'Buy Now'}</span>
+                  </button>
+                ) : (
+                  <Link
+                    to="/request-quote"
+                    className="flex-1 text-center bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs py-2.5 rounded-xl border border-slate-200 transition-colors"
+                  >
+                    {t('cta.quote')}
+                  </Link>
+                )}
               </div>
 
             </div>
@@ -199,6 +212,16 @@ export const SolutionsPage: React.FC = () => {
         )}
 
       </div>
+
+      {/* PayPal & Credit/Debit Card Checkout Modal */}
+      {checkoutProduct && (
+        <PayPalCheckoutModal
+          product={checkoutProduct}
+          isOpen={!!checkoutProduct}
+          onClose={() => setCheckoutProduct(null)}
+        />
+      )}
+
     </div>
   );
 };

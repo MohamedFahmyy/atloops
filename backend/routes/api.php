@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\AdminPageController;
 use App\Http\Controllers\Api\AdminLeadController;
 use App\Http\Controllers\Api\AdminMediaController;
 use App\Http\Controllers\Api\AdminUserController;
+use App\Http\Controllers\Api\PaymentController;
 
 Route::prefix('v1')->group(function () {
 
@@ -29,6 +30,11 @@ Route::prefix('v1')->group(function () {
     Route::get('/testimonials', [PublicController::class, 'getTestimonials']);
     Route::get('/faqs', [PublicController::class, 'getFaqs']);
     Route::get('/pages/{slug}', [PublicController::class, 'getPageBySlug']);
+
+    // --- ONLINE CHECKOUT & PAYMENTS (PayPal & Credit/Debit Cards) ---
+    Route::get('/payments/paypal/config', [PaymentController::class, 'getPayPalConfig']);
+    Route::post('/payments/paypal/create-order', [PaymentController::class, 'createPayPalOrder'])->middleware('throttle:20,1');
+    Route::post('/payments/paypal/capture-order', [PaymentController::class, 'capturePayPalOrder'])->middleware('throttle:20,1');
 
     // Lead Submissions with Rate Limiting & Anti-Spam
     Route::post('/leads', [PublicController::class, 'submitLead'])->middleware('throttle:15,1');
