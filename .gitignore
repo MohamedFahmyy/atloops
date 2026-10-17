@@ -1,0 +1,45 @@
+# ==============================================================================
+# AT LOOPS ENTERPRISE — GITIGNORE
+# ==============================================================================
+
+# Operating System & IDE Files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Backend Laravel Secrets & Caches
+backend/.env
+backend/.env.backup
+backend/.env.production
+backend/.phpunit.result.cache
+backend/storage/*.key
+backend/storage/logs/*.log
+backend/storage/framework/cache/data/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/app/public/uploads/*
+!backend/storage/app/public/uploads/.gitkeep
+backend/vendor/
+
+# Frontend Vite & Node Dependencies
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.env.local
+frontend/.env.*.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# Scratch & Temporary Test Scripts
+check_pdo.php
+check_users.php
+test_login_curl.php
+scratch/
+tmp/
