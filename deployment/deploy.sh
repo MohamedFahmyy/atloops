@@ -104,7 +104,8 @@ fi
 
 # 8. Automated Post-Deploy Health Check
 echo "🩺 Running post-deployment health check..."
-HEALTH_URL="http://127.0.0.1/api/v1/health"
+APP_PORT="${APP_PORT:-8181}"
+HEALTH_URL="http://127.0.0.1:${APP_PORT}/api/v1/health"
 HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: atloops.com" "${HEALTH_URL}" || echo "000")
 
 if [ "${HTTP_STATUS}" -eq 200 ] || [ "${HTTP_STATUS}" -eq 301 ]; then
